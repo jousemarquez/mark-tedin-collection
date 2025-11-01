@@ -1,36 +1,110 @@
-# 🧙‍♂️ Mark Tedin Collection
+```
+# Mark Tedin Collection
 
-Aplicación en **React** que permite gestionar tu colección de cartas ilustradas por **Mark Tedin** (artista de *Magic: The Gathering*), mostrando cada carta con su imagen desde la **API de Scryfall**, y permitiéndote marcar si la posees o no.  
+Una aplicación React para gestionar tu colección de cartas de Magic: The Gathering del artista **Mark Tedin**.  
 
-Incluye estadísticas en tiempo real, barra de progreso, filtros y persistencia local automática.
+La app permite:
 
----
-
-## 🚀 Características principales
-
-- **Carga dinámica** de cartas desde un archivo `cards.txt`.
-- **Obtención automática** de imágenes mediante la [API de Scryfall](https://scryfall.com/docs/api).
-- **Marcar cartas** con un checkbox para indicar si la tienes o no.
-- **Persistencia local** con `localStorage` (se mantiene tras recargar).
-- **Estadísticas visuales:**
-  - Barra de progreso con porcentaje de colección completada.
-  - Filtros por estado: “Todas”, “Tengo”, “No tengo”.
-- **Diseño responsive** con CSS vanilla y grid adaptable.
-- **Manejo de errores** y carga progresiva de imágenes (con fallback si no existen).
+- Visualizar todas las cartas del artista.
+- Marcar si tienes o no cada carta.
+- Guardar el estado de tu colección en **MongoDB Atlas** (persistente y desplegada en Vercel).
+- Buscar cartas por nombre.
+- Ver una barra de progreso de tu colección.
+- Consultar imágenes de cartas desde la API de **Scryfall**.
+- Colorear cartas en **verde** si las tienes, y en **rojo** si no.
 
 ---
 
-## 🧩 Requisitos
+## 💻 Instalación
 
-- Node.js 18+  
-- npm o yarn
+1. Clona el repositorio:
+
+```bash
+git clone <tu-repo-url>
+cd mark-tedin-collection
+```
+
+2. Instala dependencias:
+
+```bash
+npm install
+```
+
+3. Crea un archivo `.env` en la raíz con tu URI de MongoDB Atlas:
+
+```
+MONGODB_URI=mongodb+srv://USER:PASSWORD@cluster0.mongodb.net/mark-tedin-db?retryWrites=true&w=majority
+```
+
+> Reemplaza `USER` y `PASSWORD` con tu usuario de MongoDB Atlas.
 
 ---
 
-## 📦 Instalación
+## 🗂 Estructura del proyecto
 
-1. Clona este repositorio:
+```
+mark-tedin-collection/
+├─ src/
+│  ├─ App.jsx          # Componente principal con grid de cartas
+│  ├─ App.css          # Estilos en CSS vanilla
+│  └─ cards.txt        # Lista de cartas de Mark Tedin
+├─ api/
+│  └─ cards.js         # API route para MongoDB Atlas
+├─ populateDB.js       # Script para poblar MongoDB con cartas
+├─ .env                # Variables de entorno (no subir a Git)
+├─ package.json
+└─ README.md
+```
 
-   ```bash
-   git clone https://github.com/tuusuario/mark-tedin-collection.git
-   cd mark-tedin-collection
+---
+
+## 🚀 Población inicial de la base de datos
+
+Para insertar todas las cartas en MongoDB Atlas con `owned: false`:
+
+```bash
+node populateDB.js
+```
+
+> Asegúrate de que `cards.txt` contiene todas las cartas y que `.env` tiene la variable `MONGODB_URI`.
+
+---
+
+## 🛠 Scripts
+
+- `npm run populate` → Ejecuta el script para poblar MongoDB.  
+- `npm start` → Inicia la app en modo desarrollo (React).  
+- `npm run build` → Compila la app para producción (lista para Vercel).  
+
+---
+
+## ⚡ Uso
+
+1. Abre la app en el navegador.  
+2. Busca cartas usando el input de búsqueda.  
+3. Marca el checkbox **“Tengo esta carta”** para cada carta que poseas.  
+4. Observa cómo se actualiza la barra de progreso y el color de la carta.  
+5. Pulsa **Guardar cambios** para persistir tu colección en MongoDB Atlas.  
+
+---
+
+## 🔗 APIs usadas
+
+- [Scryfall API](https://scryfall.com/docs/api) → Para obtener imágenes y datos de las cartas.  
+- MongoDB Atlas → Base de datos persistente para almacenar tu colección.  
+
+---
+
+## 📦 Dependencias principales
+
+- `react` / `react-dom`  
+- `mongodb` → Cliente de MongoDB  
+- `dotenv` → Para cargar variables de entorno en Node.js  
+
+---
+
+## 📌 Notas
+
+- Este proyecto está optimizado para ser desplegado en **Vercel**.  
+- No subas tu `.env` a GitHub; contiene credenciales sensibles.  
+```
