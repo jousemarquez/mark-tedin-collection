@@ -1,4 +1,3 @@
-```
 # Mark Tedin Collection
 
 Una aplicación React para gestionar tu colección de cartas de Magic: The Gathering del artista **Mark Tedin**.  
@@ -106,5 +105,4 @@ node populateDB.js
 ## 📌 Notas
 
 - Este proyecto está optimizado para ser desplegado en **Vercel**.  
-- No subas tu `.env` a GitHub; contiene credenciales sensibles.  
-```
+- No subas tu `.env` a GitHub; contiene credenciales sensibles.
