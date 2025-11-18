@@ -11,17 +11,23 @@ export default function App() {
   const [loadedImages, setLoadedImages] = useState({});
   const [loadingProgress, setLoadingProgress] = useState(0);
 
+  // Pagination
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
+
   useEffect(() => {
-    fetch("/cards.txt")
-      .then((res) => res.text())
-      .then((text) => {
-        const cardNames = text
-          .split("\n")
-          .map((name) => name.trim())
-          .filter((n) => n.length > 0);
-        setCards(cardNames);
-      });
-  }, []);
+  fetch("/cards.txt")
+    .then((res) => res.text())
+    .then((text) => {
+      const cardNames = text
+        .split("\n")
+        .map((name) => name.trim())
+        .filter((n) => n.length > 0)
+        // ❌ elimina números al principio y punto
+        .map((n) => n.replace(/^\d+\.\s*/, ""));
+      setCards(cardNames);
+    });
+}, []);
 
   useEffect(() => {
     localStorage.setItem("ownedCards", JSON.stringify(ownedCards));
@@ -64,6 +70,23 @@ export default function App() {
 
   const totalOwned = Object.values(ownedCards).filter(Boolean).length;
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredCards.length / pageSize);
+  const pageCards = filteredCards.slice((page - 1) * pageSize, page * pageSize);
+
+  const nextPage = () => {
+    if (page < totalPages) setPage(page + 1);
+  };
+
+  const prevPage = () => {
+    if (page > 1) setPage(page - 1);
+  };
+
+  // Reset page when search changes
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
+
   return (
     <div className="container">
       <h1>Mark Tedin Collection</h1>
@@ -93,10 +116,10 @@ export default function App() {
       )}
 
       <div className="card-grid">
-        {filteredCards.length === 0 ? (
+        {pageCards.length === 0 ? (
           <p className="no-results">No cards found.</p>
         ) : (
-          filteredCards.map((card) => {
+          pageCards.map((card) => {
             const owned = ownedCards[card];
             const image = loadedImages[card];
 
@@ -127,6 +150,21 @@ export default function App() {
           })
         )}
       </div>
+
+      {/* Pagination Controls */}
+      {filteredCards.length > pageSize && (
+        <div className="pagination">
+          <button onClick={prevPage} disabled={page === 1}>
+            ← Prev
+          </button>
+          <span>
+            Page {page} / {totalPages}
+          </span>
+          <button onClick={nextPage} disabled={page === totalPages}>
+            Next →
+          </button>
+        </div>
+      )}
     </div>
   );
 }
