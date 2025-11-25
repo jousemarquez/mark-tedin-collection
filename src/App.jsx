@@ -22,9 +22,7 @@ export default function App() {
       const cardNames = text
         .split("\n")
         .map((name) => name.trim())
-        .filter((n) => n.length > 0)
-        // ❌ elimina números al principio y punto
-        .map((n) => n.replace(/^\d+\.\s*/, ""));
+        .filter((n) => n.length > 0);
       setCards(cardNames);
     });
 }, []);
