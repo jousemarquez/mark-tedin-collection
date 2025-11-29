@@ -10,14 +10,10 @@ export default function Home() {
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
 
-<<<<<<< HEAD
   // Pagination
   const [page, setPage] = useState(1);
   const pageSize = 20;
 
-=======
-  // Cargar cartas desde el txt
->>>>>>> 3118f66 (Changes)
   useEffect(() => {
   fetch("/cards.txt")
     .then((res) => res.text())
