@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 
-export default function App() {
+export default function Home() {
   const [cards, setCards] = useState([]);
-  const [ownedCards, setOwnedCards] = useState(() => {
-    const stored = localStorage.getItem("ownedCards");
-    return stored ? JSON.parse(stored) : {};
-  });
+  const [ownedCards, setOwnedCards] = useState({});
   const [search, setSearch] = useState("");
   const [loadedImages, setLoadedImages] = useState({});
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
 
+<<<<<<< HEAD
   // Pagination
   const [page, setPage] = useState(1);
   const pageSize = 20;
 
+=======
+  // Cargar cartas desde el txt
+>>>>>>> 3118f66 (Changes)
   useEffect(() => {
   fetch("/cards.txt")
     .then((res) => res.text())
@@ -27,10 +30,23 @@ export default function App() {
     });
 }, []);
 
+  // Cargar estado de la colección desde la base de datos
   useEffect(() => {
-    localStorage.setItem("ownedCards", JSON.stringify(ownedCards));
-  }, [ownedCards]);
+    const fetchOwnedCards = async () => {
+      try {
+        const res = await fetch("/api/getOwnedCards");
+        if (res.ok) {
+          const data = await res.json();
+          setOwnedCards(data.ownedCards || {});
+        }
+      } catch (err) {
+        console.error("Error fetching owned cards:", err);
+      }
+    };
+    fetchOwnedCards();
+  }, []);
 
+  // Cargar imágenes desde Scryfall
   useEffect(() => {
     if (cards.length === 0) return;
 
@@ -60,6 +76,30 @@ export default function App() {
       ...prev,
       [card]: !prev[card],
     }));
+  };
+
+  const saveToDatabase = async () => {
+    setSaving(true);
+    setSaveMessage("");
+
+    try {
+      const res = await fetch("/api/saveOwnedCards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ownedCards }),
+      });
+
+      if (res.ok) {
+        setSaveMessage("✅ Colección guardada correctamente!");
+      } else {
+        setSaveMessage("❌ Error al guardar la colección.");
+      }
+    } catch (err) {
+      console.error(err);
+      setSaveMessage("❌ Error al conectar con la base de datos.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const filteredCards = cards.filter((card) =>
@@ -108,6 +148,11 @@ export default function App() {
         onChange={(e) => setSearch(e.target.value)}
         className="search-bar"
       />
+
+      <button onClick={saveToDatabase} disabled={saving} className="save-button">
+        {saving ? "Guardando..." : "Guardar cambios"}
+      </button>
+      {saveMessage && <p className="save-message">{saveMessage}</p>}
 
       {loadingProgress < 100 && (
         <p className="loading">Loading images... {loadingProgress}%</p>
